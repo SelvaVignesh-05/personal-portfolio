@@ -3,110 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Grid Calculator</title>
+    <title>Sleek Premium Calculator</title>
     <style>
+        /* Premium Dark Mode Styling */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
         }
 
         body {
-            background-color: #0f172a;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* Calculator Wrapper */
+        /* Glassmorphism Calculator Body */
         .calculator {
-            background-color: #1e293b;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 28px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
             width: 100%;
-            max-width: 340px;
-            border: 1px solid #334155;
+            max-width: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Display Screen */
-        .display {
-            background-color: #0f172a;
-            color: #38bdf8;
-            font-size: 2rem;
+        /* Attractive Dual-Line Screen Display */
+        .display-container {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             text-align: right;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            min-height: 70px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .previous-op {
+            color: #64748b;
+            font-size: 0.95rem;
+            min-height: 20px;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .current-val {
+            color: #38bdf8;
+            font-size: 2.2rem;
+            font-weight: 600;
             word-wrap: break-word;
             word-break: break-all;
-            border: 1px solid #334155;
+            line-height: 1;
         }
 
-        /* CSS Grid System for Button Alignment */
+        /* Geometric Grid Arrangement */
         .buttons-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 14px;
         }
 
+        /* Circular/Soft Square Premium Buttons */
         button {
-            background-color: #334155;
+            background: rgba(255, 255, 255, 0.03);
             color: #f8fafc;
-            border: none;
-            padding: 20px;
-            font-size: 1.25rem;
-            font-weight: bold;
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            aspect-ratio: 1; /* Makes them perfectly square/round */
+            font-size: 1.4rem;
+            font-weight: 500;
+            border-radius: 50%;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         button:hover {
-            background-color: #475569;
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            color: #ffffff;
         }
 
-        /* Customizing specific button spans and colors */
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Vivid Neon Accents for Operators */
         button.operator {
-            background-color: #f97316;
-            color: #ffffff;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.2);
+            font-size: 1.6rem;
         }
 
         button.operator:hover {
-            background-color: #ea580c;
+            background: #38bdf8;
+            color: #0f172a;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
         }
 
+        /* Warning Accent for Clear */
         button.clear {
-            background-color: #ef4444;
-            color: #ffffff;
-            grid-column: span 2;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         button.clear:hover {
-            background-color: #dc2626;
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
         }
 
+        /* Success Accent for Equals Button */
         button.equal {
-            background-color: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: #ffffff;
+            border: none;
             grid-column: span 2;
+            aspect-ratio: auto;
+            border-radius: 30px;
+            font-size: 1.6rem;
         }
 
         button.equal:hover {
-            background-color: #059669;
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
         }
     </style>
 </head>
 <body>
 
     <div class="calculator">
-        <div class="display" id="screen">0</div>
+        <div class="display-container">
+            <div class="previous-op" id="history"></div>
+            <div class="current-val" id="screen">0</div>
+        </div>
 
         <div class="buttons-grid" id="button-container">
             <button class="clear" data-action="clear">C</button>
+            <button class="operator" data-op="%">%</button>
             <button class="operator" data-op="/">÷</button>
             <button class="operator" data-op="*">×</button>
 
@@ -123,101 +170,4 @@
             <button data-num="1">1</button>
             <button data-num="2">2</button>
             <button data-num="3">3</button>
-            <button class="equal" data-action="calculate">=</button>
-
-            <button data-num="0" style="grid-column: span 2;">0</button>
-            <button data-num=".">.</button>
-        </div>
-    </div>
-
-    <script>
-        const screen = document.getElementById('screen');
-        const container = document.getElementById('button-container');
-        
-        let currentInput = '0';
-        let previousInput = '';
-        let operation = null;
-        let shouldResetScreen = false;
-
-        // Using a single event listener on the parent container (Event Delegation)
-        container.addEventListener('click', (e) => {
-            if (!e.target.matches('button')) return;
-
-            const button = e.target;
-            const num = button.dataset.num;
-            const op = button.dataset.op;
-            const action = button.dataset.action;
-
-            if (num) handleNumber(num);
-            if (op) handleOperator(op);
-            if (action === 'clear') handleClear();
-            if (action === 'calculate') handleCalculate();
-
-            updateDisplay();
-        });
-
-        function handleNumber(num) {
-            if (currentInput === '0' || shouldResetScreen) {
-                currentInput = num;
-                shouldResetScreen = false;
-            } else {
-                // Prevent duplicate decimals
-                if (num === '.' && currentInput.includes('.')) return;
-                currentInput += num;
-            }
-        }
-
-        function handleOperator(nextOperator) {
-            const value = parseFloat(currentInput);
-
-            if (operation && shouldResetScreen) {
-                operation = nextOperator;
-                return;
-            }
-
-            if (previousInput === '') {
-                previousInput = currentInput;
-            } else if (operation) {
-                const result = runCalculation(parseFloat(previousInput), value, operation);
-                currentInput = String(result);
-                previousInput = String(result);
-            }
-
-            operation = nextOperator;
-            shouldResetScreen = true;
-        }
-
-        function handleCalculate() {
-            if (!operation || shouldResetScreen) return;
-            
-            currentInput = String(runCalculation(parseFloat(previousInput), parseFloat(currentInput), operation));
-            previousInput = '';
-            operation = null;
-            shouldResetScreen = true;
-        }
-
-        function handleClear() {
-            currentInput = '0';
-            previousInput = '';
-            operation = null;
-            shouldResetScreen = false;
-        }
-
-        // Using operators & if-else logic to handle computing
-        function runCalculation(a, b, op) {
-            if (op === '+') return a + b;
-            if (op === '-') return a - b;
-            if (op === '*') return a * b;
-            if (op === '/') {
-                if (b === 0) return 'Error'; // Handle division by zero safely
-                return a / b;
-            }
-            return b;
-        }
-
-        function updateDisplay() {
-            screen.innerText = currentInput;
-        }
-    </script>
-</body>
-</html>
+            <button class="equal" data-action="calculate
