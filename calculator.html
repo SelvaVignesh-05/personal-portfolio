@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -23,15 +23,14 @@
 
         /* Glassmorphism Calculator Body */
         .calculator {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             padding: 28px;
             border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             width: 100%;
-            max-width: 350px;
+            max-width: 340px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -73,26 +72,25 @@
             gap: 14px;
         }
 
-        /* Circular/Soft Square Premium Buttons */
+        /* Circular Premium Buttons */
         button {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
             color: #f8fafc;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            aspect-ratio: 1; /* Makes them perfectly square/round */
+            aspect-ratio: 1;
             font-size: 1.4rem;
             font-weight: 500;
             border-radius: 50%;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         button:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             transform: scale(1.05);
-            color: #ffffff;
         }
 
         button:active {
@@ -110,7 +108,6 @@
         button.operator:hover {
             background: #38bdf8;
             color: #0f172a;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
         }
 
         /* Warning Accent for Clear */
@@ -123,7 +120,6 @@
         button.clear:hover {
             background: #ef4444;
             color: white;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
         }
 
         /* Success Accent for Equals Button */
@@ -139,7 +135,7 @@
 
         button.equal:hover {
             background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
     </style>
 </head>
@@ -151,23 +147,94 @@
             <div class="current-val" id="screen">0</div>
         </div>
 
-        <div class="buttons-grid" id="button-container">
-            <button class="clear" data-action="clear">C</button>
-            <button class="operator" data-op="%">%</button>
-            <button class="operator" data-op="/">÷</button>
-            <button class="operator" data-op="*">×</button>
+        <div class="buttons-grid">
+            <button class="clear" onclick="pressClear()">C</button>
+            <button class="operator" onclick="pressOperator('%')">%</button>
+            <button class="operator" onclick="pressOperator('/')">÷</button>
+            <button class="operator" onclick="pressOperator('*')">×</button>
 
-            <button data-num="7">7</button>
-            <button data-num="8">8</button>
-            <button data-num="9">9</button>
-            <button class="operator" data-op="-">−</button>
+            <button onclick="pressNum('7')">7</button>
+            <button onclick="pressNum('8')">8</button>
+            <button onclick="pressNum('9')">9</button>
+            <button class="operator" onclick="pressOperator('-')">−</button>
 
-            <button data-num="4">4</button>
-            <button data-num="5">5</button>
-            <button data-num="6">6</button>
-            <button class="operator" data-op="+">+</button>
+            <button onclick="pressNum('4')">4</button>
+            <button onclick="pressNum('5')">5</button>
+            <button onclick="pressNum('6')">6</button>
+            <button class="operator" onclick="pressOperator('+')">+</button>
 
-            <button data-num="1">1</button>
-            <button data-num="2">2</button>
-            <button data-num="3">3</button>
-            <button class="equal" data-action="calculate
+            <button onclick="pressNum('1')">1</button>
+            <button onclick="pressNum('2')">2</button>
+            <button onclick="pressNum('3')">3</button>
+            <button class="equal" onclick="pressEquals()">=</button>
+
+            <button onclick="pressNum('0')" style="grid-column: span 2; aspect-ratio: auto; border-radius: 30px;">0</button>
+            <button onclick="pressNum('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        const screen = document.getElementById('screen');
+        const historyScreen = document.getElementById('history');
+        
+        let memoryValue = "";
+        let currentOp = "";
+        let resetOnNextInput = false;
+
+        function pressNum(num) {
+            if (screen.innerText === "0" || resetOnNextInput) {
+                if (num === ".") {
+                    screen.innerText = "0.";
+                } else {
+                    screen.innerText = num;
+                }
+                resetOnNextInput = false;
+            } else {
+                if (num === "." && screen.innerText.includes(".")) return;
+                screen.innerText += num;
+            }
+        }
+
+        function pressOperator(op) {
+            memoryValue = screen.innerText;
+            currentOp = op;
+            let symbol = op === '*' ? '×' : op === '/' ? '÷' : op;
+            historyScreen.innerText = memoryValue + " " + symbol;
+            resetOnNextInput = true;
+        }
+
+        function pressEquals() {
+            if (!currentOp || memoryValue === "") return;
+
+            let valA = parseFloat(memoryValue);
+            let valB = parseFloat(screen.innerText);
+            let output = 0;
+
+            if (currentOp === "+") output = valA + valB;
+            else if (currentOp === "-") output = valA - valB;
+            else if (currentOp === "*") output = valA * valB;
+            else if (currentOp === "%") output = valA % valB;
+            else if (currentOp === "/") {
+                output = valB === 0 ? "Error" : valA / valB;
+            }
+
+            let symbol = currentOp === '*' ? '×' : currentOp === '/' ? '÷' : currentOp;
+            historyScreen.innerText = valA + " " + symbol + " " + valB + " =";
+            screen.innerText = output;
+
+            // Reset calculation states
+            memoryValue = "";
+            currentOp = "";
+            resetOnNextInput = true;
+        }
+
+        function pressClear() {
+            screen.innerText = "0";
+            historyScreen.innerText = "";
+            memoryValue = "";
+            currentOp = "";
+            resetOnNextInput = false;
+        }
+    </script>
+</body>
+</html>
